@@ -33,7 +33,7 @@
 
     <fragment
         android:id="@+id/plant_list_fragment"
-        android:name="com.eunhye.com.android_sunflower_example.PlantDetailFragment"
+        android:name="com.eunhye.com.android_sunflower_example.PlantListFragment"
         android:label="@string/plant_list_title"
         tools:layout="@layout/fragment_plant_list">
 
