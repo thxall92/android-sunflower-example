@@ -5,20 +5,14 @@ import androidx.core.view.GravityCompat
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
+import androidx.navigation.ui.*
 import com.eunhye.com.android_sunflower_example.databinding.ActivityGardenBinding
 import kotlinx.android.synthetic.main.activity_garden.*
 
-class GardenActivity : AppCompatActivity(){
+class GardenActivity : AppCompatActivity() {
 
     private lateinit var drawerLayout: DrawerLayout
-    private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,20 +20,20 @@ class GardenActivity : AppCompatActivity(){
         val binding: ActivityGardenBinding = DataBindingUtil.setContentView(this, R.layout.activity_garden)
         drawerLayout = binding.drawerLayout
 
-        navController = Navigation.findNavController(this, R.id.garden_nav_fragment)
-        appBarConfiguration = AppBarConfiguration(navController.graph, drawerLayout)
 
+        val navController = Navigation.findNavController(this, R.id.garden_nav_fragment)
 
         // Set up ActionBar
         setSupportActionBar(binding.toolbar)
-        setupActionBarWithNavController(navController, appBarConfiguration)
+        NavigationUI.setupActionBarWithNavController(this, navController, drawerLayout)
 
         // Set up navigation menu
         binding.navigationView.setupWithNavController(navController)
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+        return NavigationUI.navigateUp(
+            Navigation.findNavController(this, R.id.garden_nav_fragment), drawerLayout)
     }
 
     override fun onBackPressed() {

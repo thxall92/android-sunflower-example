@@ -6,6 +6,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.eunhye.com.android_sunflower_example.utilities.DATABASE_NAME
 import com.eunhye.com.android_sunflower_example.utilities.runOnIoThread
@@ -14,8 +15,10 @@ import com.google.gson.reflect.TypeToken
 import java.io.IOException
 import java.nio.charset.Charset
 
-@Database(entities = [Plant::class], version = 1, exportSchema = false)
+@Database(entities = [GardenPlanting::class, Plant::class], version = 1, exportSchema = false)
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
+    abstract fun gardenPlantingDao(): GardenPlantingDao
     abstract fun plantDao(): PlantDao
 
     companion object {
@@ -25,19 +28,15 @@ abstract class AppDatabase : RoomDatabase() {
 
         fun getInstance(context: Context): AppDatabase {
             return instance ?: synchronized(this) {
-                instance ?: deleteAndBuildDatabase(context).also { instance = it }
+                instance ?: buildDatabase(context).also { instance = it }
             }
-        }
-
-        // Reset the database to have new data on every app launch
-        private fun deleteAndBuildDatabase(context: Context): AppDatabase {
-            context.deleteDatabase(DATABASE_NAME)
-            return buildDatabase(context)
         }
 
         // Create and pre-populate the database. See this article for more details:
         // https://medium.com/google-developers/7-pro-tips-for-room-fbadea4bfbd1#4785
         private fun buildDatabase(context: Context): AppDatabase {
+//            context.deleteDatabase(DATABASE_NAME)
+
             return Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
                 .addCallback(object : RoomDatabase.Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {

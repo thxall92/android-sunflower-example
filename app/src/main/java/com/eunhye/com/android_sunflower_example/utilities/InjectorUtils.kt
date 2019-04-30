@@ -1,8 +1,8 @@
 package com.eunhye.com.android_sunflower_example.utilities
 
-import android.app.Application
 import android.content.Context
 import com.eunhye.com.android_sunflower_example.data.AppDatabase
+import com.eunhye.com.android_sunflower_example.data.GardenPlantingRepository
 import com.eunhye.com.android_sunflower_example.data.PlantRepository
 import com.eunhye.com.android_sunflower_example.viewmodels.PlantDetailViewModelFactory
 import com.eunhye.com.android_sunflower_example.viewmodels.PlantListViewModelFactory
@@ -12,23 +12,25 @@ import com.eunhye.com.android_sunflower_example.viewmodels.PlantListViewModelFac
  */
 object InjectorUtils {
 
-    private fun provideRepository(context: Context): PlantRepository {
-        return PlantRepository.getInstance(AppDatabase.getInstance(context.applicationContext).plantDao())
+    private fun getPlantRepository(context: Context): PlantRepository {
+        return PlantRepository.getInstance(AppDatabase.getInstance(context).plantDao())
     }
 
-    @JvmStatic fun providePlantListViewModelFactory(
-        context: Context
-    ): PlantListViewModelFactory {
-        val repository = provideRepository(context)
+    private fun getGardenPlantingRepository(context: Context): GardenPlantingRepository {
+        return GardenPlantingRepository.getInstance(AppDatabase.getInstance(context).gardenPlantingDao())
+    }
+
+    fun providePlantListViewModelFactory(context: Context): PlantListViewModelFactory {
+        val repository = getPlantRepository(context)
         return PlantListViewModelFactory(repository)
     }
 
-    @JvmStatic fun providePlantDetailViewModelFactory(
+    fun providePlantDetailViewModelFactory(
         context: Context,
         plantId: String
     ): PlantDetailViewModelFactory {
-        val repository = provideRepository(context.applicationContext)
-        return PlantDetailViewModelFactory(repository, plantId)
+        return PlantDetailViewModelFactory(getPlantRepository(context),
+            getGardenPlantingRepository(context), plantId)
     }
 
 }

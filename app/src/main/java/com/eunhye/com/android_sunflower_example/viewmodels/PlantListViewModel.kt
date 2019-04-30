@@ -1,9 +1,6 @@
 package com.eunhye.com.android_sunflower_example.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.eunhye.com.android_sunflower_example.data.Plant
 import com.eunhye.com.android_sunflower_example.data.PlantRepository
 
@@ -13,20 +10,24 @@ import com.eunhye.com.android_sunflower_example.data.PlantRepository
 class PlantListViewModel internal constructor(plantRepository: PlantRepository) : ViewModel() {
 
     private val NO_GROW_ZONE = -1
-    private val plantRepo: PlantRepository = plantRepository
     private val growZoneNumber: MutableLiveData<Int> = MutableLiveData()
+
+    private val plantList = MediatorLiveData<List<Plant>>()
 
     init {
         growZoneNumber.value = NO_GROW_ZONE
+
+        val livePlantList = Transformations.switchMap(growZoneNumber) {
+            if (it == NO_GROW_ZONE) {
+                plantRepository.getPlants()
+            } else {
+                plantRepository.getPlantsWithGrowZoneNumber(it)
+            }
+        }
+        plantList.addSource(livePlantList, plantList::setValue)
     }
 
-    fun getPlants(): LiveData<List<Plant>> = Transformations.switchMap(growZoneNumber) {
-        if (it == NO_GROW_ZONE) {
-            plantRepo.getPlants()
-        } else {
-            plantRepo.getPlantsWithGrowZoneNumber(it)
-        }
-    }
+    fun getPlants() = plantList
 
     fun setGrowZoneNumber(num: Int) {
         growZoneNumber.value = num
@@ -35,4 +36,6 @@ class PlantListViewModel internal constructor(plantRepository: PlantRepository) 
     fun clearGrowZoneNumber() {
         growZoneNumber.value = NO_GROW_ZONE
     }
+
+    fun isFiltered() = growZoneNumber.value != NO_GROW_ZONE
 }

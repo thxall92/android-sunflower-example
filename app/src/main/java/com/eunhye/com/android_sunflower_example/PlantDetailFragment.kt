@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.eunhye.com.android_sunflower_example.databinding.FragmentPlantDetailBinding
 import androidx.databinding.DataBindingUtil
@@ -16,6 +17,7 @@ class PlantDetailFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val plantId = requireNotNull(arguments).getString(ARG_ITEM_ID)
+
         val factory = InjectorUtils.providePlantDetailViewModelFactory(requireActivity(), plantId)
         val plantDetailViewModel = ViewModelProviders.of(this, factory)
             .get(PlantDetailViewModel::class.java)
@@ -24,13 +26,13 @@ class PlantDetailFragment : Fragment() {
             inflater, R.layout.fragment_plant_detail, container, false).apply {
             viewModel = plantDetailViewModel
             setLifecycleOwner(this@PlantDetailFragment)
-
         }
-        return binding!!.root
+
+        return binding.root
     }
 
-    companion object {
 
+    companion object {
         const val ARG_ITEM_ID = "item_id"
 
         fun newInstance(plantId: String): PlantDetailFragment {

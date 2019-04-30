@@ -7,15 +7,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-
 import com.eunhye.com.android_sunflower_example.adapters.PlantAdapter
 import com.eunhye.com.android_sunflower_example.databinding.FragmentPlantListBinding
 import com.eunhye.com.android_sunflower_example.utilities.InjectorUtils
 import com.eunhye.com.android_sunflower_example.viewmodels.PlantListViewModel
 
 class PlantListFragment : Fragment() {
-
-    private var isTwoPane: Boolean = false
 
     private lateinit var viewModel: PlantListViewModel
 
@@ -26,17 +23,18 @@ class PlantListFragment : Fragment() {
         val factory = InjectorUtils.providePlantListViewModelFactory(context)
         viewModel = ViewModelProviders.of(this, factory).get(PlantListViewModel::class.java)
 
-
-        val adapter = PlantAdapter(this, isTwoPane)
+        val adapter = PlantAdapter()
         binding.plantList.adapter = adapter
         subscribeUi(adapter)
 
+        setHasOptionsMenu(true)
         return binding.root
     }
 
     private fun subscribeUi(adapter: PlantAdapter) {
-        viewModel.getPlants().observe(this, Observer { plants ->
-            if (plants != null) adapter.values = plants
+        viewModel.getPlants().observe(viewLifecycleOwner, Observer { plants ->
+            if (plants != null) adapter.submitList(plants)
         })
     }
+
 }

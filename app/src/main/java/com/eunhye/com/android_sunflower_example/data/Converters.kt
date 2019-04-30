@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
-package com.eunhye.com.android_sunflower_example.utilities
+package com.eunhye.com.android_sunflower_example.data
+
+import androidx.room.TypeConverter
+import java.util.Calendar
 
 /**
- * Constants used throughout the app.
+ * Type converters to allow Room to reference complex data types.
  */
-const val DATABASE_NAME = "sunflower-db"
+class Converters {
+    @TypeConverter fun calendarToDatestamp(calendar: Calendar): Long = calendar.timeInMillis
+
+    @TypeConverter fun datestampToCalendar(value: Long): Calendar =
+            Calendar.getInstance().apply { timeInMillis = value }
+}
