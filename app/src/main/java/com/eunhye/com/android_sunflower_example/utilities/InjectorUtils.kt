@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import com.eunhye.com.android_sunflower_example.data.AppDatabase
 import com.eunhye.com.android_sunflower_example.data.PlantRepository
+import com.eunhye.com.android_sunflower_example.viewmodels.PlantDetailViewModelFactory
 import com.eunhye.com.android_sunflower_example.viewmodels.PlantListViewModelFactory
 
 /**
@@ -21,13 +22,13 @@ object InjectorUtils {
         val repository = provideRepository(context)
         return PlantListViewModelFactory(repository)
     }
-//
-//    @JvmStatic fun providePlantDetailViewModelFactory(
-//        application: Application,
-//        plantId: String
-//    ): PlantDetailViewModelFactory {
-//        val repository = provideRepository(application)
-//        return PlantDetailViewModelFactory(repository, plantId)
-//    }
+
+    @JvmStatic fun providePlantDetailViewModelFactory(
+        context: Context,
+        plantId: String
+    ): PlantDetailViewModelFactory {
+        val repository = provideRepository(context.applicationContext)
+        return PlantDetailViewModelFactory(repository, plantId)
+    }
 
 }

@@ -1,12 +1,18 @@
 package com.eunhye.com.android_sunflower_example.data
 
 import android.content.Context
+import android.util.Log
+import androidx.annotation.VisibleForTesting
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.eunhye.com.android_sunflower_example.utilities.DATABASE_NAME
 import com.eunhye.com.android_sunflower_example.utilities.runOnIoThread
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.io.IOException
+import java.nio.charset.Charset
 
 @Database(entities = [Plant::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
@@ -24,7 +30,6 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
         // Reset the database to have new data on every app launch
-        // TODO / STOPSHIP: This is only used for development; remove prior to shipping
         private fun deleteAndBuildDatabase(context: Context): AppDatabase {
             context.deleteDatabase(DATABASE_NAME)
             return buildDatabase(context)
@@ -37,19 +42,35 @@ abstract class AppDatabase : RoomDatabase() {
                 .addCallback(object : RoomDatabase.Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)
-                        runOnIoThread { seedDatabase(getInstance(context)) }
+                        runOnIoThread { seedDatabase(context) }
                     }
                 })
                 .build()
         }
 
-        private fun seedDatabase(database: AppDatabase) {
-            database.plantDao().insertAll(ArrayList<Plant>(4).apply {
-                add(Plant("1", "Apple", "A red fruit", 1))
-                add(Plant("2", "Beet", "A red root vegetable", 1))
-                add(Plant("3", "Celery", "A green vegetable", 2))
-                add(Plant("4", "Tomato", "A red vegetable", 3))
-            })
+        private fun seedDatabase(context: Context) {
+            val plantType = object: TypeToken<List<Plant>>(){}.type
+            val plantList: List<Plant> = Gson().fromJson(readJson(context), plantType)
+            val database = getInstance(context)
+            database.plantDao().insertAll(plantList)
+        }
+
+        @VisibleForTesting internal fun readJson(
+            context: Context,
+            fileName: String = "plants.json"
+        ): String {
+            return try {
+                val inputStream = context.assets.open(fileName)
+                val buffer = ByteArray(inputStream.available())
+                inputStream.run{
+                    read(buffer)
+                    close()
+                }
+                String(buffer, Charset.defaultCharset())
+            }catch(ex: IOException){
+                Log.i("AppDatabase", "Error reading JSON: $ex")
+                ""
+            }
         }
     }
 

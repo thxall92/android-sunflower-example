@@ -17,6 +17,9 @@ buildscript {
         navigationVersion = '2.0.0'
         constraintLayoutVersion = '2.0.0-alpha5'
         lifecycleVersion = '2.1.0-alpha04'
+        gsonVersion = '2.8.2'
+
+        glideVersion = '4.9.0'
 
         roomVersion = '2.1.0-alpha07'
     }

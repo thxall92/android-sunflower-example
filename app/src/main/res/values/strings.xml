@@ -8,5 +8,7 @@
     <string name="nav_header_title">Sunflower Example</string>
     <string name="nav_header_desc">Navigation header</string>
 
+    <string name="plant_detail_image_content_description">Image of plant</string>
+
     <string name="action_settings">Settings</string>
 </resources>

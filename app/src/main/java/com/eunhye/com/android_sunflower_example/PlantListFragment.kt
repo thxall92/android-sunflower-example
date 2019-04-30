@@ -15,6 +15,8 @@ import com.eunhye.com.android_sunflower_example.viewmodels.PlantListViewModel
 
 class PlantListFragment : Fragment() {
 
+    private var isTwoPane: Boolean = false
+
     private lateinit var viewModel: PlantListViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -24,7 +26,8 @@ class PlantListFragment : Fragment() {
         val factory = InjectorUtils.providePlantListViewModelFactory(context)
         viewModel = ViewModelProviders.of(this, factory).get(PlantListViewModel::class.java)
 
-        val adapter = PlantAdapter()
+
+        val adapter = PlantAdapter(this, isTwoPane)
         binding.plantList.adapter = adapter
         subscribeUi(adapter)
 

@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
-
+        <variable
+                name="viewModel"
+                type="com.eunhye.com.android_sunflower_example.viewmodels.PlantDetailViewModel"/>
     </data>
 
-    <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="Fragment Plant Detail"/>
-
-    </FrameLayout>
+    <TextView
+            android:id="@+id/plant_detail"
+            style="?android:attr/textAppearanceLarge"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.plant.description}"
+            android:textIsSelectable="true"
+            tools:text="Details about the plant" />
 
 </layout>
